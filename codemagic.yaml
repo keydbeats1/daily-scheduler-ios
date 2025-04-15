@@ -23,4 +23,3 @@ workflows:
       - ios/App/App.xcodeproj/project.pbxproj
       - ios/App/**/*.ipa
       - ios/App/build/**/*
-
