@@ -1,25 +1,25 @@
-    workflows:
-    ios-web-app:
-      name: Build iOS Web App
-      max_build_duration: 15
-      environment:
-        vars:
-          NODE_VERSION: "20.10.0"
-        node: $NODE_VERSION
-      scripts:
-        - name: Install dependencies
-          script: |
-            npm install
-        - name: Build web app
-          script: |
-            npm run build || echo "no build script defined"
-        - name: Convert to iOS using Capacitor
-          script: |
-            npm install --global @capacitor/cli
-            npx cap init schedulepro com.yourcompany.schedulepro --web-dir=dist
-            npx cap add ios
-            npx cap copy ios
-      artifacts:
-        - ios/App/App.xcodeproj/project.pbxproj
-        - ios/App/**/*.ipa
-        - ios/App/build/**/*
+workflows:
+  ios-web-app:
+    name: Build iOS Web App
+    max_build_duration: 15
+    environment:
+      vars:
+        NODE_VERSION: "20.10.0"
+      node: $NODE_VERSION
+    scripts:
+      - name: Install dependencies
+        script: |
+          npm install
+      - name: Build web app
+        script: |
+          npm run build || echo "no build script defined"
+      - name: Convert to iOS using Capacitor
+        script: |
+          npm install --global @capacitor/cli
+          npx cap init schedulepro com.yourcompany.schedulepro --web-dir=dist
+          npx cap add ios
+          npx cap copy ios
+    artifacts:
+      - ios/App/App.xcodeproj/project.pbxproj
+      - ios/App/**/*.ipa
+      - ios/App/build/**/*
