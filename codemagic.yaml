@@ -4,7 +4,7 @@
       max_build_duration: 15
       environment:
         vars:
-          NODE_VERSION: "16.20.0"
+          NODE_VERSION: "20.10.0"
         node: $NODE_VERSION
       scripts:
         - name: Install dependencies
