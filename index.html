@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Daily Scheduler">
+    <meta name="theme-color" content="#4a6fa5">
+    <meta name="description" content="A daily task scheduler and reminder app that works offline">
+    
+    <!-- iOS specific meta tags -->
+    <meta name="format-detection" content="telephone=no">
+    <meta name="format-detection" content="date=no">
+    <meta name="format-detection" content="address=no">
+    <meta name="format-detection" content="email=no">
+    
+    <title>Daily Scheduler</title>
+    <link rel="manifest" href="/manifest.json">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/dark-mode.css">
+    <link rel="stylesheet" href="css/ios-styles.css">
+    
+    <!-- iOS Icons -->
+    <link rel="apple-touch-icon" href="/images/icons/app-icon.svg">
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/icons/app-icon.svg">
+    <link rel="icon" type="image/svg+xml" href="/images/icons/app-icon.svg">
+    
+    <!-- iOS Splash Screens -->
+    <link rel="apple-touch-startup-image" href="/images/splashscreens/splash.svg" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)">
+    <link rel="apple-touch-startup-image" href="/images/splashscreens/splash.svg" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)">
+    <link rel="apple-touch-startup-image" href="/images/splashscreens/splash.svg" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)">
+    <link rel="apple-touch-startup-image" href="/images/splashscreens/splash.svg" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)">
+    <link rel="apple-touch-startup-image" href="/images/splashscreens/splash.svg" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)">
+    <link rel="apple-touch-startup-image" href="/images/splashscreens/splash.svg" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)">
+    
+    <!-- iOS color scheme support -->
+    <meta name="color-scheme" content="light dark">
+</head>
+<body>
+    <div class="app-container">
+        <header>
+            <h1>Daily Scheduler</h1>
+            <div class="header-controls">
+                <button id="focus-mode-toggle" class="icon-button" title="Focus Mode">
+                    <i class="fas fa-focus"></i>
+                </button>
+                <button id="add-task-button" class="icon-button" title="Add Task">
+                    <i class="fas fa-plus"></i>
+                </button>
+            </div>
+        </header>
+        
+        <div class="motivational-quote">
+            <p id="quote-text">Focus on what matters most today.</p>
+        </div>
+        
+        <div class="calendar-view">
+            <div class="calendar-header">
+                <button id="prev-week" class="calendar-nav"><i class="fas fa-chevron-left"></i></button>
+                <h2 id="current-month">October 2023</h2>
+                <button id="next-week" class="calendar-nav"><i class="fas fa-chevron-right"></i></button>
+            </div>
+            <div class="weekdays">
+                <div>Sun</div>
+                <div>Mon</div>
+                <div>Tue</div>
+                <div>Wed</div>
+                <div>Thu</div>
+                <div>Fri</div>
+                <div>Sat</div>
+            </div>
+            <div class="calendar-days" id="calendar-days"></div>
+        </div>
+        
+        <div class="progress-container">
+            <h3>Today's Progress</h3>
+            <div class="progress-bar-container">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+            <p id="progress-text">0/0 tasks completed</p>
+        </div>
+        
+        <div class="task-list-container">
+            <!-- iOS Pull-to-refresh component -->
+            <div class="pull-to-refresh" id="pull-to-refresh">
+                <div class="spinner"></div>
+            </div>
+            
+            <div class="task-filters">
+                <button class="filter-btn active" data-filter="all">All</button>
+                <button class="filter-btn" data-filter="work">Work</button>
+                <button class="filter-btn" data-filter="personal">Personal</button>
+                <button class="filter-btn" data-filter="health">Health</button>
+            </div>
+            
+            <h2 id="task-list-date">Today's Tasks</h2>
+            <ul id="task-list" class="task-list"></ul>
+            
+            <!-- iOS Share and Add to Calendar menu -->
+            <div class="ios-action-sheet" id="ios-action-sheet">
+                <div class="action-sheet-container">
+                    <h3>Task Actions</h3>
+                    <button class="action-sheet-btn" id="share-task-btn">
+                        <i class="fas fa-share-alt"></i> Share Task
+                    </button>
+                    <button class="action-sheet-btn" id="add-to-calendar-btn">
+                        <i class="fas fa-calendar-plus"></i> Add to Calendar
+                    </button>
+                    <button class="action-sheet-btn action-sheet-cancel" id="action-sheet-cancel">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Task Form Modal -->
+    <div class="modal" id="task-modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h2 id="modal-title">Add New Task</h2>
+            
+            <form id="task-form">
+                <input type="hidden" id="task-id">
+                <div class="form-group">
+                    <label for="task-title">Title</label>
+                    <input type="text" id="task-title" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="task-date">Date</label>
+                    <input type="date" id="task-date" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="task-time">Time</label>
+                    <input type="time" id="task-time" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="task-category">Category</label>
+                    <select id="task-category" required>
+                        <option value="work">Work</option>
+                        <option value="personal">Personal</option>
+                        <option value="health">Health</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="task-repeat">Repeat</label>
+                    <select id="task-repeat">
+                        <option value="none">None</option>
+                        <option value="daily">Daily</option>
+                        <option value="weekly">Weekly</option>
+                        <option value="monthly">Monthly</option>
+                    </select>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn primary-btn">Save Task</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Notification Permission Dialog -->
+    <div class="modal" id="notification-modal">
+        <div class="modal-content">
+            <h2>Enable Notifications</h2>
+            <p>To receive task reminders, please enable notifications for this app.</p>
+            <div class="form-actions">
+                <button id="enable-notifications" class="btn primary-btn">Enable Notifications</button>
+                <button id="skip-notifications" class="btn secondary-btn">Not Now</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Scripts -->
+    <script src="js/db.js"></script>
+    <script src="js/notifications.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/ios-integration.js"></script>
+    <script src="js/app.js"></script>
+    <script>
+        // Register service worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/service-worker.js')
+                    .then(reg => console.log('Service Worker registered'))
+                    .catch(err => console.log('Service Worker registration failed: ', err));
+            });
+        }
+    </script>
+</body>
+</html>
