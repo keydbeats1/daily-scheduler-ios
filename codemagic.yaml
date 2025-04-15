@@ -19,7 +19,20 @@ workflows:
           npx cap init schedulepro com.yourcompany.schedulepro --web-dir=dist
           npx cap add ios
           npx cap copy ios
+      - name: Build .ipa file
+        script: |
+          xcodebuild -project ios/App/App.xcodeproj \
+                     -scheme App \
+                     -sdk iphoneos \
+                     -configuration Release \
+                     -archivePath $CM_BUILD_DIR/App.xcarchive archive
+
+          xcodebuild -exportArchive \
+                     -archivePath $CM_BUILD_DIR/App.xcarchive \
+                     -exportOptionsPlist exportOptions.plist \
+                     -exportPath $CM_BUILD_DIR/build
     artifacts:
       - ios/App/App.xcodeproj/project.pbxproj
-      - ios/App/**/*.ipa
-      - ios/App/build/**/*
+      - $CM_BUILD_DIR/build/*.ipa
+      - $CM_BUILD_DIR/build/**/*
+
